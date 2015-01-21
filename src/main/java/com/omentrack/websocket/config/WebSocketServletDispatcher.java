@@ -1,4 +1,4 @@
-package com.omentrack.archetype.websocket.config;
+package com.omentrack.websocket.config;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -25,10 +25,10 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.omentrack.archetype.websocket.config.annotation.WebSocketController;
-import com.omentrack.archetype.websocket.config.annotation.WebSocketGet;
-import com.omentrack.archetype.websocket.config.annotation.WebSocketSubscribe;
-import com.omentrack.archetype.websocket.config.annotation.WebSocketUnSubscribe;
+import com.omentrack.websocket.config.annotation.WebSocketController;
+import com.omentrack.websocket.config.annotation.WebSocketGet;
+import com.omentrack.websocket.config.annotation.WebSocketSubscribe;
+import com.omentrack.websocket.config.annotation.WebSocketUnSubscribe;
 
 /**
  * 

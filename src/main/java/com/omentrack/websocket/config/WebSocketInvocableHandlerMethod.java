@@ -1,4 +1,4 @@
-package com.omentrack.archetype.websocket.config;
+package com.omentrack.websocket.config;
 
 /*
  * Copyright 2002-2014 the original author or authors.

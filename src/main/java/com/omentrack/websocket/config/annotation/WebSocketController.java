@@ -11,7 +11,7 @@
  * limitations under the License.
  */
 
-package com.omentrack.archetype.websocket.config.annotation;
+package com.omentrack.websocket.config.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

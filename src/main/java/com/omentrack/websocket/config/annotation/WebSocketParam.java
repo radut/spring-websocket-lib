@@ -1,14 +1,14 @@
-package com.omentrack.archetype.websocket.config.annotation;
+package com.omentrack.websocket.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target( value = { ElementType.TYPE, ElementType.METHOD } )
+@Target( value = { ElementType.PARAMETER } )
 @Retention( RetentionPolicy.RUNTIME )
-public @interface WebSocketSubscribe {
-	
+public @interface WebSocketParam {
+
 	String value();
 
 }

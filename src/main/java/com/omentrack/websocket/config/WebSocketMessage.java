@@ -1,4 +1,4 @@
-package com.omentrack.archetype.websocket.config;
+package com.omentrack.websocket.config;
 
 import java.util.HashMap;
 import java.util.Map;

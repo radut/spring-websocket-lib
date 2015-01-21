@@ -1,4 +1,4 @@
-package com.omentrack.archetype.websocket.config.annotation;
+package com.omentrack.websocket.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

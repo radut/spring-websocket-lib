@@ -1,4 +1,4 @@
-package com.omentrack.archetype.websocket.config;
+package com.omentrack.websocket.config;
 
 public enum WebSocketMessageType {
 	GET, SUBSCRIBE, UNSUBSCRIBE, UPDATE;

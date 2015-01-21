@@ -5,10 +5,38 @@
 	<artifactId>websocket</artifactId>
 	<version>1.0.0</version>
 
+	<name>Spring 4 WebSocket Implementation Addont - @WebSocketController</name>
+
+	<distributionManagement>
+		<repository>
+			<id>omentrack</id>
+			<name>Internal Releases</name>
+			<url>http://nexus.omentrack.com/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>omentrack</id>
+			<name>Internal Releases</name>
+			<url>http://nexus.omentrack.com/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<properties>
 		<org.apache.tomcat.version>7.0.56</org.apache.tomcat.version>
+		<org.springframework.bom>4.1.4.RELEASE</org.springframework.bom>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-framework-bom</artifactId>
+				<version>${org.springframework.bom}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 
 		<dependency>
@@ -45,19 +73,16 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>4.1.4.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-websocket</artifactId>
-			<version>4.1.4.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-messaging</artifactId>
-			<version>4.1.4.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

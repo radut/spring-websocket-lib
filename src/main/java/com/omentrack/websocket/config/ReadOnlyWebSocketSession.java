@@ -1,4 +1,4 @@
-package com.omentrack.archetype.websocket.config;
+package com.omentrack.websocket.config;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

@@ -3,6 +3,7 @@ package com.omentrack.websocket.config;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.servlet.http.HttpSession;
 
@@ -11,7 +12,7 @@ import org.springframework.web.socket.WebSocketSession;
 public class WebSocketClient {
 
 	private HttpSession httpSession;
-	private Set<String> subscriptions = Collections.synchronizedSet( new HashSet<String>( ) );
+	private Set<String> subscriptions = new ConcurrentSkipListSet<String>();
 	private WebSocketSession webSocketSession;
 	
 	public WebSocketClient( WebSocketSession session, HttpSession httpSession ) {

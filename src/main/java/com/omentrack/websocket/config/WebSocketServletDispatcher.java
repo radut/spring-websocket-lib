@@ -107,7 +107,9 @@ public class WebSocketServletDispatcher extends TextWebSocketHandler {
 		WebSocketSession webSocketSession = client.getWebSocketSession( );
 		try {
 			String messageAsString = jacksonConverter.getObjectMapper( ).writeValueAsString( message );
-			webSocketSession.sendMessage( new TextMessage( messageAsString ) );
+			synchronized ( webSocketSession ) {
+				webSocketSession.sendMessage( new TextMessage( messageAsString ) );
+			}
 			logger.debug( "send msg : " + webSocketSession.getId( )
 										+ "   =  "
 										+ messageAsString );

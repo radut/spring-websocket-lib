@@ -1,1 +1,1 @@
-mvn clean source:jar javadoc:jar deploy
+mvn -Prelease-profile deploy 

@@ -88,9 +88,11 @@ public class WebSocketServletDispatcher extends TextWebSocketHandler {
 				WebSocketMessage webSocketMessage = objectMapper.readValue( message.getPayload( ), WebSocketMessage.class );
 				response.setType( webSocketMessage.getType( ) );
 				response.setUrl( webSocketMessage.getUrl( ) );
-				Object methodResultValue = handleWebSocketMessage( webSocketClient, objectMapper, webSocketMessage );
-				response.setResultOk( true );
-				response.setResult( methodResultValue );
+				synchronized ( session ) { // we must sync on session, because a thread could send a message to one of the user subscription, while this user sends, unsubscribe to alter that subscriptions list;
+					Object methodResultValue = handleWebSocketMessage( webSocketClient, objectMapper, webSocketMessage );
+					response.setResultOk( true );
+					response.setResult( methodResultValue );
+				}
 			} catch ( Exception e ) {
 				logger.warn( e );
 				response.setErrorMessage( e.getMessage( ) );
@@ -98,7 +100,6 @@ public class WebSocketServletDispatcher extends TextWebSocketHandler {
 		}
 		
 		sendMessageInternal( webSocketClient, response );
-		
 	}
 	
 	@Async

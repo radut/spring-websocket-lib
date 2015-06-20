@@ -94,7 +94,7 @@ public class WebSocketServletDispatcher extends TextWebSocketHandler {
 					response.setResult( methodResultValue );
 				}
 			} catch ( Exception e ) {
-				logger.warn( e );
+				logger.warn( e.getMessage( ), e );
 				response.setErrorMessage( e.getMessage( ) );
 			}
 		}
@@ -218,7 +218,7 @@ public class WebSocketServletDispatcher extends TextWebSocketHandler {
 					WebSocketMessage webSocketMessage = buildUnSubscribeMessageFor( subscription, webSocketClient );
 					handleWebSocketMessage( webSocketClient, jacksonConverter.getObjectMapper( ), webSocketMessage );
 				} catch ( Exception e ) {
-					logger.warn( e );
+					logger.warn( e.getMessage( ),e );
 				}
 			}
 		}

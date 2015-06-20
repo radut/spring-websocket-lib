@@ -148,6 +148,8 @@ public class WebSocketServletDispatcher extends TextWebSocketHandler {
 		for ( Entry<String, Object> entry : wsControllers.entrySet( ) ) {
 			Object controller = entry.getValue( );
 			RequestMapping controllerMapping = controller.getClass( ).getAnnotation( RequestMapping.class );
+			if (controllerMapping==null)
+				continue;
 			String[] controllerMappings = controllerMapping.value( );
 			for ( String controllerUrl : controllerMappings ) {
 				if ( webSocketMessage.getUrl( ).startsWith( controllerUrl ) ) {

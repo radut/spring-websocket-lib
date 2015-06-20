@@ -8,7 +8,8 @@ import java.lang.annotation.Target;
 @Target( value = { ElementType.PARAMETER } )
 @Retention( RetentionPolicy.RUNTIME )
 public @interface WebSocketParam {
-
-	String value();
-
+	
+	String value() default "";
+	
+	boolean required() default true;
 }

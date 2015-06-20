@@ -30,6 +30,7 @@ import org.springframework.util.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.omentrack.websocket.config.annotation.WebSocketParam;
 
 /**
  * Invokes the handler method for a given message after resolving
@@ -46,7 +47,7 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 	private HandlerMethodArgumentResolver argumentResolvers = new HandlerMethodArgumentResolverComposite( );
 	
 	private ParameterNameDiscoverer parameterNameDiscoverer = new WebSocketDataParamParameterNameDiscovery( );
-
+	
 	/**
 	 * Create an instance from a {@code HandlerMethod}.
 	 */
@@ -54,7 +55,7 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 	
 		super( handlerMethod );
 	}
-
+	
 	/**
 	 * Create an instance from a bean instance and a method.
 	 */
@@ -62,7 +63,7 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 	
 		super( bean, method );
 	}
-
+	
 	/**
 	 * Construct a new handler method with the given bean instance, method name and parameters.
 	 * 
@@ -79,15 +80,15 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 	
 		super( bean, methodName, parameterTypes );
 	}
-
+	
 	/**
 	 * Set {@link HandlerMethodArgumentResolver}s to use to use for resolving method argument values.
 	 */
 	public void setMessageMethodArgumentResolvers( HandlerMethodArgumentResolver argumentResolvers ) {
-
+	
 		this.argumentResolvers = argumentResolvers;
 	}
-
+	
 	/**
 	 * Set the ParameterNameDiscoverer for resolving parameter names when needed
 	 * (e.g. default request attribute name).
@@ -95,10 +96,10 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 	 * Default is a {@link org.springframework.core.DefaultParameterNameDiscoverer}.
 	 */
 	public void setParameterNameDiscoverer( ParameterNameDiscoverer parameterNameDiscoverer ) {
-
+	
 		this.parameterNameDiscoverer = parameterNameDiscoverer;
 	}
-
+	
 	/**
 	 * Invoke the method with the given message.
 	 * 
@@ -122,7 +123,7 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 		}
 		return returnValue;
 	}
-
+	
 	/**
 	 * Get the method argument values for the current request.
 	 * 
@@ -142,6 +143,13 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 			args[i] = resolveProvidedArgument( objectMapper, parameter, parameterName, dataMap, arguments );
 			if ( args[i] != null ) {
 				continue;
+			} else {
+				if ( parameter.hasParameterAnnotation( WebSocketParam.class ) ) {
+					WebSocketParam webSocketParam = parameter.getParameterAnnotation( WebSocketParam.class );
+					if ( !webSocketParam.required( ) ) {
+						continue;
+					}
+				}
 			}
 			if ( argumentResolvers.supportsParameter( parameter ) ) {
 				try {
@@ -149,13 +157,14 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 					continue;
 				} catch ( Exception ex ) {
 					if ( logger.isTraceEnabled( ) ) {
-						logger.trace( getArgumentResolutionErrorMessage( "Error resolving argument", i ), ex );
+						logger.trace( getArgumentResolutionErrorMessage( "Error resolving argument = '"+parameterName+"'", i ), ex );
 					}
 					throw ex;
 				}
 			}
 			if ( args[i] == null ) {
-				String error = getArgumentResolutionErrorMessage( "No suitable resolver for argument", i );
+				String error = getArgumentResolutionErrorMessage( "No suitable resolver for argument = '" + parameterName
+																													+ "' which is required", i );
 				throw new IllegalStateException( error );
 			}
 		}
@@ -171,7 +180,7 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 							 + "]";
 		return getDetailedErrorMessage( message );
 	}
-
+	
 	/**
 	 * Adds HandlerMethod details such as the controller type and method signature to the given error message.
 	 * 
@@ -186,7 +195,7 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 		sb.append( "Method [" ).append( getBridgedMethod( ).toGenericString( ) ).append( "]\n" );
 		return sb.toString( );
 	}
-
+	
 	/**
 	 * Attempt to resolve a method parameter from the list of provided argument values.
 	 * 
@@ -216,7 +225,7 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Invoke the handler method with the given argument values.
 	 */
@@ -243,7 +252,7 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 			}
 		}
 	}
-
+	
 	/**
 	 * Assert that the target bean class is an instance of the class where the given
 	 * method is declared. In some cases the actual controller instance at request-
@@ -280,5 +289,5 @@ public class WebSocketInvocableHandlerMethod extends HandlerMethod {
 		}
 		return sb.toString( );
 	}
-
+	
 }

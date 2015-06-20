@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.omentrack.spring</groupId>
 	<artifactId>spring-websocket-omentrack</artifactId>
-	<version>1.1.1</version>
+	<version>1.1.2</version>
 
 	<name>Spring 4 WebSocket Implementation Addont - @WebSocketController</name>
 
@@ -138,8 +138,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<!-- or whatever version you use -->
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 				</configuration>
 			</plugin>
 		</plugins>

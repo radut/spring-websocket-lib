@@ -24,13 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * A convenience annotation that is itself annotated with {@link Controller @Controller} and {@link ResponseBody @ResponseBody}.
- * <p>
- * Types that carry this annotation are treated as controllers where {@link RequestMapping @RequestMapping} methods assume {@link ResponseBody @ResponseBody} semantics by default.
+ * 
+ * @author Radu Toader
  *
- * @author Rossen Stoyanchev
- * @author Sam Brannen
- * @since 4.0
  */
 @Target( ElementType.TYPE )
 @Retention( RetentionPolicy.RUNTIME )

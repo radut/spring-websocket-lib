@@ -148,7 +148,7 @@ public class WebSocketServletDispatcher extends TextWebSocketHandler {
 		for ( Entry<String, Object> entry : wsControllers.entrySet( ) ) {
 			Object controller = entry.getValue( );
 			RequestMapping controllerMapping = controller.getClass( ).getAnnotation( RequestMapping.class );
-			if (controllerMapping==null)
+			if ( controllerMapping == null )
 				continue;
 			String[] controllerMappings = controllerMapping.value( );
 			for ( String controllerUrl : controllerMappings ) {
@@ -191,22 +191,24 @@ public class WebSocketServletDispatcher extends TextWebSocketHandler {
 	
 	private Object handleWebSocketMessage( WebSocketClient webSocketClient, ObjectMapper objectMapper, WebSocketMessage webSocketMessage ) throws Exception {
 	
-		WebSocketInvocableHandlerMethod wsihm = getWebSocketInvocableHandlerMethod( webSocketMessage );
-		Object returnValue = wsihm.invokeWithArguments( objectMapper, webSocketMessage.getData( ),//
-				new ReadOnlyWebSocketSession( webSocketClient.getWebSocketSession( ) ), webSocketClient.getHttpSession( ) );
-		
-		switch ( webSocketMessage.getType( ) ) {
-			case SUBSCRIBE:
-				webSocketClient.getSubscriptions( ).add( webSocketMessage.getUrl( ) );
-				break;
-			case UNSUBSCRIBE:
-				webSocketClient.getSubscriptions( ).remove( webSocketMessage.getUrl( ) );
-				break;
-			case GET: // do nothing
-			default: // do nothing
-				break;
+		synchronized ( webSocketClient.getWebSocketSession( ) ) {
+			WebSocketInvocableHandlerMethod wsihm = getWebSocketInvocableHandlerMethod( webSocketMessage );
+			Object returnValue = wsihm.invokeWithArguments( objectMapper, webSocketMessage.getData( ),//
+					new ReadOnlyWebSocketSession( webSocketClient.getWebSocketSession( ) ), webSocketClient.getHttpSession( ) );
+			
+			switch ( webSocketMessage.getType( ) ) {
+				case SUBSCRIBE:
+					webSocketClient.getSubscriptions( ).add( webSocketMessage.getUrl( ) );
+					break;
+				case UNSUBSCRIBE:
+					webSocketClient.getSubscriptions( ).remove( webSocketMessage.getUrl( ) );
+					break;
+				case GET: // do nothing
+				default: // do nothing
+					break;
+			}
+			return returnValue;
 		}
-		return returnValue;
 		
 	}
 	
@@ -220,7 +222,7 @@ public class WebSocketServletDispatcher extends TextWebSocketHandler {
 					WebSocketMessage webSocketMessage = buildUnSubscribeMessageFor( subscription, webSocketClient );
 					handleWebSocketMessage( webSocketClient, jacksonConverter.getObjectMapper( ), webSocketMessage );
 				} catch ( Exception e ) {
-					logger.warn( e.getMessage( ),e );
+					logger.warn( e.getMessage( ), e );
 				}
 			}
 		}

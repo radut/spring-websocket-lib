@@ -11,7 +11,7 @@
 		<repository>
 			<id>omentrack</id>
 			<name>Internal Releases</name>
-			<url>http://nexus.omentrack.pampam.tv/content/repositories/releases/</url>
+			<url>http://nexus.omentrack.pampam.tv/content/repositories/public/</url>
 		</repository>
 		<snapshotRepository>
 			<id>omentrack</id>

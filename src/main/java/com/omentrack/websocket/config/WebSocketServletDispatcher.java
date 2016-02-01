@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -151,14 +152,17 @@ public class WebSocketServletDispatcher extends TextWebSocketHandler {
 		
 		for ( Entry<String, Object> entry : wsControllers.entrySet( ) ) {
 			Object controller = entry.getValue( );
+			Class<?> realController = AopUtils.getTargetClass( controller );
 			RequestMapping controllerMapping = AnnotationUtils.findAnnotation( controller.getClass( ), RequestMapping.class );
 			if ( controllerMapping == null )
 				continue;
 			String[] controllerMappings = controllerMapping.value( );
 			for ( String controllerUrl : controllerMappings ) {
 				if ( webSocketMessage.getUrl( ).startsWith( controllerUrl ) ) {
-					Method[] methods = controller.getClass( ).getMethods( );
+					Method[] methods = realController.getMethods( );
 					for ( Method method : methods ) {
+						method = AopUtils.getMostSpecificMethod( method, realController );
+						System.out.println( method.getName( ) );
 						switch ( type ) {
 							case GET:
 								WebSocketGet get = AnnotationUtils.findAnnotation( method, WebSocketGet.class );

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.omentrack.spring</groupId>
 	<artifactId>spring-websocket-omentrack</artifactId>
-	<version>1.1.4</version>
+	<version>1.1.5</version>
 
 	<name>Spring 4 WebSocket Implementation Addont - @WebSocketController</name>
 

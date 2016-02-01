@@ -1,5 +1,6 @@
 package com.omentrack.websocket.config;
 
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -160,24 +161,24 @@ public class WebSocketServletDispatcher extends TextWebSocketHandler {
 					for ( Method method : methods ) {
 						switch ( type ) {
 							case GET:
-								if ( method.isAnnotationPresent( WebSocketGet.class ) ) {
-									WebSocketGet get = AnnotationUtils.findAnnotation( method, WebSocketGet.class );
+								WebSocketGet get = AnnotationUtils.findAnnotation( method, WebSocketGet.class );
+								if ( get != null ) {
 									if ( webSocketMessage.getUrl( ).equals( ( combineAndCleanUrl( controllerUrl, get.value( ) ) ) ) ) {
 										return new WebSocketInvocableHandlerMethod( controller, method );
 									}
 								}
 								break;
 							case SUBSCRIBE:
-								if ( method.isAnnotationPresent( WebSocketSubscribe.class ) ) {
-									WebSocketSubscribe subscribe = AnnotationUtils.findAnnotation( method, WebSocketSubscribe.class );
+								WebSocketSubscribe subscribe = AnnotationUtils.findAnnotation( method, WebSocketSubscribe.class );
+								if ( subscribe != null ) {
 									if ( webSocketMessage.getUrl( ).equals( ( combineAndCleanUrl( controllerUrl, subscribe.value( ) ) ) ) ) {
 										return new WebSocketInvocableHandlerMethod( controller, method );
 									}
 								}
 								break;
 							case UNSUBSCRIBE:
-								if ( method.isAnnotationPresent( WebSocketUnSubscribe.class ) ) {
-									WebSocketUnSubscribe unSubscribe = AnnotationUtils.findAnnotation( method, WebSocketUnSubscribe.class );
+								WebSocketUnSubscribe unSubscribe = AnnotationUtils.findAnnotation( method, WebSocketUnSubscribe.class );
+								if ( unSubscribe != null ) {
 									if ( webSocketMessage.getUrl( ).equals( combineAndCleanUrl( controllerUrl, unSubscribe.value( ) ) ) ) {
 										return new WebSocketInvocableHandlerMethod( controller, method );
 									}

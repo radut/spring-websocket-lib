@@ -1,9 +1,8 @@
 package com.omentrack.websocket.config;
 
-import java.lang.reflect.Field;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +25,11 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.socket.adapter.standard.StandardWebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +37,12 @@ import com.omentrack.websocket.config.annotation.WebSocketController;
 import com.omentrack.websocket.config.annotation.WebSocketGet;
 import com.omentrack.websocket.config.annotation.WebSocketSubscribe;
 import com.omentrack.websocket.config.annotation.WebSocketUnSubscribe;
+import com.omentrack.websocket.config.model.MessageStatus;
+import com.omentrack.websocket.config.model.WebSocketClient;
+import com.omentrack.websocket.config.model.WebSocketMessage;
+import com.omentrack.websocket.config.model.WebSocketMessageType;
+import com.omentrack.websocket.config.model.WebSocketResponse;
+import com.omentrack.websocket.config.model.WebSocketSessionWrapper;
 
 /**
  *
@@ -275,7 +277,7 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 		synchronized ( webSocketClient.getWebSocketSession( ) ) {
 			WebSocketInvocableHandlerMethod wsihm = getWebSocketInvocableHandlerMethod( webSocketMessage );
 			Object returnValue = wsihm.invokeWithArguments( objectMapper, webSocketMessage.getData( ),//
-					new ReadOnlyWebSocketSession( webSocketClient.getWebSocketSession( ) ), webSocketClient.getHttpSession( ) );
+					new WebSocketSessionWrapper( webSocketClient.getWebSocketSession( ), this ), webSocketClient.getHttpSession( ) );
 					
 			switch ( webSocketMessage.getType( ) ) {
 				case SUBSCRIBE:
@@ -367,4 +369,28 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 		}
 	}
 	
+	@Override
+	public void close( WebSocketSession session ) {
+		
+		WebSocketClient webSocketClient = sessions.get( session.getId( ) );
+		try {
+			removeClient( session );
+			webSocketClient.getWebSocketSession( ).close( );
+		} catch ( IOException e ) {
+			logger.info( e.getMessage( ), e );
+		}
+	}
+	
+	@Override
+	public void close( WebSocketSession session, CloseStatus status ) {
+		
+		WebSocketClient webSocketClient = sessions.get( session.getId( ) );
+		try {
+			removeClient( session );
+			webSocketClient.getWebSocketSession( ).close( status );
+		} catch ( IOException e ) {
+			logger.info( e.getMessage( ), e );
+		}
+		
+	}
 }

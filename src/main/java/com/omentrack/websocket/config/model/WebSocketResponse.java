@@ -1,4 +1,4 @@
-package com.omentrack.websocket.config;
+package com.omentrack.websocket.config.model;
 
 public class WebSocketResponse {
 	

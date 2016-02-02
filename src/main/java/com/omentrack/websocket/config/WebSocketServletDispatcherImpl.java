@@ -3,6 +3,7 @@ package com.omentrack.websocket.config;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -305,6 +307,25 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 				}
 			}
 		}
+	}
+	
+	@Override
+	@Scheduled( fixedDelay = 3000 )
+	public void refreshConnectedSessions() {
+		
+		for ( Entry<String, WebSocketClient> entry : sessions.entrySet( ) ) {
+			WebSocketClient value = entry.getValue( );
+			if ( value.getWebSocketSession( ).isOpen( ) ) {
+				HttpSession httpSession = value.getHttpSession( );
+				try {
+					refreshSessionLastAccessTime( httpSession );
+				} catch ( Exception e ) {
+					if ( logger.isDebugEnabled( ) )
+						logger.debug( e.getMessage( ), e );
+				}
+			}
+		}
+		
 	}
 	
 	@Async

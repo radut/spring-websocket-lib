@@ -14,5 +14,7 @@ public interface WebSocketServletDispatcher {
 	Future<Map<WebSocketClient, MessageStatus>> sendMessageToClients( List<WebSocketClient> clients, String subscription, Object message );
 	
 	Future<Map<WebSocketClient, MessageStatus>> sendMessageToAllSubscribers( String subscription, Object message );
+
+	void refreshConnectedSessions();
 	
 }

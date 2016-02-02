@@ -1,6 +1,5 @@
 package com.omentrack.websocket.config;
 
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +21,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.PongMessage;
@@ -39,7 +39,7 @@ import com.omentrack.websocket.config.annotation.WebSocketUnSubscribe;
  *
  * @author Radu Toader
  */
-@Component( value = "webSocketServletDispatcher" )
+@Service( value = "webSocketServletDispatcher" )
 public class WebSocketServletDispatcherImpl extends TextWebSocketHandler implements WebSocketServletDispatcher {
 	
 	private static final Logger logger = Logger.getLogger( WebSocketServletDispatcherImpl.class );

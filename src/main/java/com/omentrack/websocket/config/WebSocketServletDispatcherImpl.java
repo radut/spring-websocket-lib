@@ -39,7 +39,6 @@ import com.omentrack.websocket.config.annotation.WebSocketUnSubscribe;
  *
  * @author Radu Toader
  */
-@Service( value = "webSocketServletDispatcher" )
 public class WebSocketServletDispatcherImpl extends TextWebSocketHandler implements WebSocketServletDispatcher {
 	
 	private static final Logger logger = Logger.getLogger( WebSocketServletDispatcherImpl.class );

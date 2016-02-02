@@ -30,10 +30,10 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import annotation.WebSocketController;
-import annotation.WebSocketGet;
-import annotation.WebSocketSubscribe;
-import annotation.WebSocketUnSubscribe;
+import com.omentrack.websocket.config.annotation.WebSocketController;
+import com.omentrack.websocket.config.annotation.WebSocketGet;
+import com.omentrack.websocket.config.annotation.WebSocketSubscribe;
+import com.omentrack.websocket.config.annotation.WebSocketUnSubscribe;
 
 /**
  *

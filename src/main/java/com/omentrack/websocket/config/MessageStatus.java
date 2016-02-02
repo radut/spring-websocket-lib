@@ -5,17 +5,16 @@ public class MessageStatus {
 	private boolean sent;
 	private boolean notSubscribed;
 	
-	public MessageStatus( Exception exception ) {
+	private MessageStatus( Exception exception ) {
 		this.exception = exception;
 		sent = false;
 	}
 	
-	public MessageStatus() {
+	private MessageStatus() {
 		sent = true;
 	}
 	
-	public MessageStatus( boolean sent, boolean notSubscribed ) {
-		this.sent = sent;
+	private MessageStatus( boolean notSubscribed ) {
 		this.notSubscribed = notSubscribed;
 	}
 	
@@ -24,29 +23,14 @@ public class MessageStatus {
 		return sent;
 	}
 	
-	public void setSent( boolean sent ) {
-		
-		this.sent = sent;
-	}
-	
 	public Exception getException() {
 		
 		return exception;
 	}
 	
-	public void setException( Exception exception ) {
-		
-		this.exception = exception;
-	}
-	
 	public boolean isNotSubscribed() {
 		
 		return notSubscribed;
-	}
-	
-	public void setNotSubscribed( boolean subscriptionNotPresent ) {
-		
-		notSubscribed = subscriptionNotPresent;
 	}
 	
 	@Override
@@ -65,6 +49,21 @@ public class MessageStatus {
 		builder.append( notSubscribed );
 		builder.append( "]" );
 		return builder.toString( );
+	}
+	
+	public static MessageStatus buildOkResult() {
+		
+		return new MessageStatus( );
+	}
+	
+	public static MessageStatus buildErrorResult( Exception e ) {
+		
+		return new MessageStatus( e );
+	}
+	
+	public static MessageStatus buildNotSubscribed() {
+		
+		return new MessageStatus( true );
 	}
 	
 }

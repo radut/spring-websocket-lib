@@ -69,7 +69,7 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 		try {
 			return future.get( );
 		} catch ( Exception e ) {
-			return new MessageStatus( e );
+			return MessageStatus.buildErrorResult( e );
 		}
 	}
 	
@@ -83,7 +83,6 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 	@Async
 	public Future<Map<WebSocketClient, MessageStatus>> sendMessageToAllHttpSession( String jSessionId, String subscription, Object message ) {
 		
-		Logger.getLogger( WebSocketServletDispatcherImpl.class ).error( " (clients, subscription, message) " );
 		List<WebSocketClient> webSocketClientsWithSubscription = new ArrayList<WebSocketClient>( );
 		for ( WebSocketClient webSocketClient : sessions.values( ) ) {
 			if ( webSocketClient.getHttpSession( ).getId( ).equals( jSessionId ) ) {
@@ -99,7 +98,6 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 	@Async
 	public Future<Map<WebSocketClient, MessageStatus>> sendMessageToAllSubscribers( String subscription, Object message ) {
 		
-		Logger.getLogger( WebSocketServletDispatcherImpl.class ).error( " (clients, subscription, message) " );
 		List<WebSocketClient> webSocketClientsWithSubscription = new ArrayList<WebSocketClient>( );
 		for ( WebSocketClient webSocketClient : sessions.values( ) ) {
 			if ( webSocketClient.getSubscriptions( ).contains( subscription ) ) {
@@ -115,7 +113,6 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 	@Async
 	public Future<Map<WebSocketClient, MessageStatus>> sendMessageToClients( List<WebSocketClient> clients, String subscription, Object message ) {
 		
-		Logger.getLogger( WebSocketServletDispatcherImpl.class ).error( " (clients, subscription, message) " );
 		Map<WebSocketClient, Future<MessageStatus>> tempFutureMap = new HashMap<>( );
 		for ( WebSocketClient wsClient : clients ) {
 			WebSocketResponse webSocketResponse = buildWebSocketResponseMessage( subscription, message );
@@ -134,14 +131,13 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 	@Async
 	public Future<MessageStatus> sendMessageToWebSocketClient( String webSocketSessionId, String subscription, Object message ) {
 		
-		Logger.getLogger( WebSocketServletDispatcherImpl.class ).error( " (clients, subscription, message) " );
 		WebSocketClient webSocketClient = sessions.get( webSocketSessionId );
 		MessageStatus result = null;
 		if ( webSocketClient != null && webSocketClient.getSubscriptions( ).contains( subscription ) ) {
 			WebSocketResponse webSocketResponse = buildWebSocketResponseMessage( subscription, message );
 			result = getMessageStatus( sendMessageInternal( webSocketClient, webSocketResponse ) );
 		} else {
-			result = new MessageStatus( false, true );
+			result = MessageStatus.buildNotSubscribed( );
 		}
 		
 		return new AsyncResult<MessageStatus>( result );
@@ -307,7 +303,6 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 	@Async
 	private Future<MessageStatus> sendMessageInternal( WebSocketClient client, WebSocketResponse message ) {
 		
-		Logger.getLogger( WebSocketServletDispatcherImpl.class ).error( " (client, message) " );
 		MessageStatus result = null;
 		WebSocketSession webSocketSession = client.getWebSocketSession( );
 		try {
@@ -315,16 +310,17 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 			synchronized ( webSocketSession ) {
 				webSocketSession.sendMessage( new TextMessage( messageAsString ) );
 			}
-			logger.debug( "send msg : " + webSocketSession.getId( )
-										+ "   =  "
-										+ messageAsString );
-			result = new MessageStatus( );
+			if ( logger.isDebugEnabled( ) )
+				logger.debug( "send msg : " + webSocketSession.getId( )
+											+ "   =  "
+											+ messageAsString );
+			result = MessageStatus.buildOkResult( );
 		} catch ( Exception e ) {
 			logger.warn( "could not send message to client : jSessionId= " + client.getHttpSession( ).getId( )
 									 + " webSocketSessionId="
 									 + webSocketSession.getId( ),
 					e );
-			result = new MessageStatus( e );
+			result = MessageStatus.buildErrorResult( e );
 		}
 		return new AsyncResult<MessageStatus>( result );
 	}

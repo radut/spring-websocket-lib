@@ -1,5 +1,6 @@
 package com.omentrack.websocket.config;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +13,9 @@ import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.catalina.session.StandardSession;
+import org.apache.catalina.session.StandardSessionFacade;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.log4j.Logger;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,7 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.adapter.standard.StandardWebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -263,6 +268,8 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 	
 	private Object handleWebSocketMessage( WebSocketClient webSocketClient, ObjectMapper objectMapper, WebSocketMessage webSocketMessage ) throws Exception {
 		
+		refreshSessionLastAccessTime( webSocketClient.getHttpSession( ) );
+		
 		synchronized ( webSocketClient.getWebSocketSession( ) ) {
 			WebSocketInvocableHandlerMethod wsihm = getWebSocketInvocableHandlerMethod( webSocketMessage );
 			Object returnValue = wsihm.invokeWithArguments( objectMapper, webSocketMessage.getData( ),//
@@ -305,6 +312,8 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 		
 		MessageStatus result = null;
 		WebSocketSession webSocketSession = client.getWebSocketSession( );
+		HttpSession httpSession = client.getHttpSession( );
+		refreshSessionLastAccessTime( httpSession );
 		try {
 			String messageAsString = jacksonConverter.getObjectMapper( ).writeValueAsString( message );
 			synchronized ( webSocketSession ) {
@@ -323,6 +332,18 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 			result = MessageStatus.buildErrorResult( e );
 		}
 		return new AsyncResult<MessageStatus>( result );
+	}
+	
+	public void refreshSessionLastAccessTime( HttpSession httpSession ) {
+		
+		try {
+			StandardSessionFacade facadeSession = (StandardSessionFacade) httpSession;
+			StandardSession session = (StandardSession) FieldUtils.readField( facadeSession, "session", true );
+			session.access( );
+			session.endAccess( );
+		} catch ( Exception e ) {
+			logger.info( "Could not refresh session : " + httpSession.getId( ), e );
+		}
 	}
 	
 }

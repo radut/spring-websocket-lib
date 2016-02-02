@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.omentrack.spring</groupId>
 	<artifactId>spring-websocket-omentrack</artifactId>
-	<version>1.2.0</version>
+	<version>1.2.1</version>
 
 	<name>Spring 4 WebSocket Implementation Addont - @WebSocketController</name>
 
@@ -23,6 +23,7 @@
 	<properties>
 		<org.apache.tomcat.version>7.0.56</org.apache.tomcat.version>
 		<org.springframework.bom>4.1.4.RELEASE</org.springframework.bom>
+		<tomcat.version>8.0.30</tomcat.version>
 	</properties>
 
 	<dependencyManagement>
@@ -39,6 +40,17 @@
 
 	<dependencies>
 
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-core</artifactId>
+			<version>${tomcat.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>

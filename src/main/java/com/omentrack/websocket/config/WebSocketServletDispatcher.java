@@ -162,7 +162,6 @@ public class WebSocketServletDispatcher extends TextWebSocketHandler {
 					Method[] methods = realController.getMethods( );
 					for ( Method method : methods ) {
 						method = AopUtils.getMostSpecificMethod( method, realController );
-						System.out.println( method.getName( ) );
 						switch ( type ) {
 							case GET:
 								WebSocketGet get = AnnotationUtils.findAnnotation( method, WebSocketGet.class );

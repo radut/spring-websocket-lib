@@ -337,24 +337,64 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 		MessageStatus result = null;
 		WebSocketSession webSocketSession = client.getWebSocketSession( );
 		touchHttpSession( client );
+		String messageAsString;
 		try {
-			String messageAsString = objectMapper.writeValueAsString( message );
-			synchronized ( webSocketSession ) {
-				webSocketSession.sendMessage( new TextMessage( messageAsString ) );
+			messageAsString = objectMapper.writeValueAsString( message );
+			int retry = 4;
+			Exception exp = null;
+			boolean sent = false;
+			while ( retry-- > 0 ) {
+				try {
+					synchronized ( webSocketSession ) {
+						if ( webSocketSession.isOpen( ) ) {
+							webSocketSession.sendMessage( new TextMessage( messageAsString ) );
+							sent = true;
+						}
+					}
+				} catch ( Exception e ) {
+					exp = e;
+				}
+				if ( sent ) {
+					break;
+				} else {
+					Thread.sleep( 300 );// retry
+				}
 			}
-			if ( logger.isDebugEnabled( ) )
-				logger.debug( "send msg : " + webSocketSession.getId( )
-											+ "   =  "
-											+ messageAsString );
-			result = MessageStatus.buildOkResult( );
+			if ( sent ) {
+				if ( logger.isDebugEnabled( ) )
+					logger.warn( "sent msg : " + webSocketSession.getId( )
+											 + " retriesLeft:"
+											 + retry
+											 + "  =  "
+											 + messageAsString );
+				result = MessageStatus.buildOkResult( );
+			} else {
+				if ( retry > 0 ) {
+					logError( client, webSocketSession, exp );
+					result = MessageStatus.buildErrorResult( exp );
+				} else {
+					result = MessageStatus.buildMaxRetryReached( );
+				}
+			}
 		} catch ( Exception e ) {
-			logger.warn( "could not send message to client : jSessionId= " + client.getHttpSession( ).getId( )
-									 + " webSocketSessionId="
-									 + webSocketSession.getId( ),
-					e );
+			logError( client, webSocketSession, e );
 			result = MessageStatus.buildErrorResult( e );
 		}
 		return new AsyncResult<MessageStatus>( result );
+	}
+	
+	public void logError( WebSocketClient client, WebSocketSession webSocketSession, Exception exp ) {
+		
+		if ( logger.isDebugEnabled( ) )
+			logger.warn( "could not send message to client : jSessionId= " + client.getHttpSession( ).getId( )
+									 + " webSocketSessionId="
+									 + webSocketSession.getId( ),
+					exp );
+		logger.warn( "could not send message to client : jSessionId= " + client.getHttpSession( ).getId( )
+								 + " webSocketSessionId="
+								 + webSocketSession.getId( )
+								 + " : "
+								 + exp.getMessage( ) );
 	}
 	
 	public void touchHttpSession( WebSocketClient client ) {

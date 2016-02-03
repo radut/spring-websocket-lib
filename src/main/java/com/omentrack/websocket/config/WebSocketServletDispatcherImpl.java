@@ -1,5 +1,6 @@
 package com.omentrack.websocket.config;
 
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -14,8 +15,6 @@ import java.util.concurrent.Future;
 import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.session.StandardSession;
-import org.apache.catalina.session.StandardSessionFacade;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.log4j.Logger;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.PongMessage;
@@ -55,9 +53,15 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 	@Autowired
 	private ApplicationContext ctx;
 	
-	@Autowired
-	private MappingJackson2HttpMessageConverter jacksonConverter;
 	private final Map<String, WebSocketClient> sessions = new ConcurrentHashMap<String, WebSocketClient>( );
+	
+	private ObjectMapper objectMapper;
+	
+	@Autowired
+	public void setJacksonConverter( MappingJackson2HttpMessageConverter jacksonConverter ) {
+		
+		objectMapper = jacksonConverter.getObjectMapper( );
+	}
 	
 	@Override
 	public void afterConnectionClosed( WebSocketSession session, CloseStatus status ) throws Exception {
@@ -73,7 +77,7 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 		sessions.put( session.getId( ), webSocketClient );
 	}
 	
-	public MessageStatus getMessageStatus( Future<MessageStatus> future ) {
+	private MessageStatus getMessageStatus( Future<MessageStatus> future ) {
 		
 		try {
 			return future.get( );
@@ -162,8 +166,13 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 	@Override
 	protected void handleTextMessage( WebSocketSession session, TextMessage message ) throws Exception {
 		
-		ObjectMapper objectMapper = jacksonConverter.getObjectMapper( );
 		WebSocketClient webSocketClient = getWebSocketClient( session );
+		
+		if ( message.getPayloadLength( ) == 1 ) {
+			if ( handleClientHeartBeat( webSocketClient, message ) ) {
+				return;
+			}
+		}
 		
 		WebSocketResponse response = new WebSocketResponse( );
 		response.setUrl( "error" );
@@ -187,6 +196,16 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 		}
 		
 		sendMessageInternal( webSocketClient, response );
+	}
+	
+	private boolean handleClientHeartBeat( WebSocketClient webSocketClient, TextMessage message ) {
+		
+		if ( "p".equals( message.getPayload( ) ) ) {
+			touchHttpSession( webSocketClient );
+			webSocketClient.touchHeartBeatTime( );
+			return true;
+		}
+		return false;
 	}
 	
 	private WebSocketMessage buildUnSubscribeMessageFor( String subscription, WebSocketClient webSocketClient ) {
@@ -213,7 +232,8 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 						 + wsMethodUrl ).replaceAll( "//", "/" );
 	}
 	
-	private WebSocketClient getWebSocketClient( WebSocketSession session ) {
+	@Override
+	public WebSocketClient getWebSocketClient( WebSocketSession session ) {
 		
 		return sessions.get( session.getId( ) );
 	}
@@ -272,7 +292,7 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 	
 	private Object handleWebSocketMessage( WebSocketClient webSocketClient, ObjectMapper objectMapper, WebSocketMessage webSocketMessage ) throws Exception {
 		
-		refreshSessionLastAccessTime( webSocketClient.getHttpSession( ) );
+		touchHttpSession( webSocketClient );
 		
 		synchronized ( webSocketClient.getWebSocketSession( ) ) {
 			WebSocketInvocableHandlerMethod wsihm = getWebSocketInvocableHandlerMethod( webSocketMessage );
@@ -303,7 +323,7 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 			for ( String subscription : subscriptions ) {
 				try {
 					WebSocketMessage webSocketMessage = buildUnSubscribeMessageFor( subscription, webSocketClient );
-					handleWebSocketMessage( webSocketClient, jacksonConverter.getObjectMapper( ), webSocketMessage );
+					handleWebSocketMessage( webSocketClient, objectMapper, webSocketMessage );
 				} catch ( Exception e ) {
 					logger.warn( e.getMessage( ), e );
 				}
@@ -311,34 +331,14 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 		}
 	}
 	
-	@Override
-	@Scheduled( fixedDelay = 3000 )
-	public void refreshConnectedSessions() {
-		
-		for ( Entry<String, WebSocketClient> entry : sessions.entrySet( ) ) {
-			WebSocketClient value = entry.getValue( );
-			if ( value.getWebSocketSession( ).isOpen( ) ) {
-				HttpSession httpSession = value.getHttpSession( );
-				try {
-					refreshSessionLastAccessTime( httpSession );
-				} catch ( Exception e ) {
-					if ( logger.isDebugEnabled( ) )
-						logger.debug( e.getMessage( ), e );
-				}
-			}
-		}
-		
-	}
-	
 	@Async
 	private Future<MessageStatus> sendMessageInternal( WebSocketClient client, WebSocketResponse message ) {
 		
 		MessageStatus result = null;
 		WebSocketSession webSocketSession = client.getWebSocketSession( );
-		HttpSession httpSession = client.getHttpSession( );
-		refreshSessionLastAccessTime( httpSession );
+		touchHttpSession( client );
 		try {
-			String messageAsString = jacksonConverter.getObjectMapper( ).writeValueAsString( message );
+			String messageAsString = objectMapper.writeValueAsString( message );
 			synchronized ( webSocketSession ) {
 				webSocketSession.sendMessage( new TextMessage( messageAsString ) );
 			}
@@ -357,16 +357,14 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 		return new AsyncResult<MessageStatus>( result );
 	}
 	
-	public void refreshSessionLastAccessTime( HttpSession httpSession ) {
+	public void touchHttpSession( WebSocketClient client ) {
 		
-		try {
-			StandardSessionFacade facadeSession = (StandardSessionFacade) httpSession;
-			StandardSession session = (StandardSession) FieldUtils.readField( facadeSession, "session", true );
+		StandardSession session = client.getRealSession( );
+		if ( session != null ) {
 			session.access( );
 			session.endAccess( );
-		} catch ( Exception e ) {
-			logger.info( "Could not refresh session : " + httpSession.getId( ), e );
 		}
+		
 	}
 	
 	@Override
@@ -375,7 +373,8 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 		WebSocketClient webSocketClient = sessions.get( session.getId( ) );
 		try {
 			removeClient( session );
-			webSocketClient.getWebSocketSession( ).close( );
+			if ( webSocketClient != null )
+				webSocketClient.getWebSocketSession( ).close( );
 		} catch ( IOException e ) {
 			logger.info( e.getMessage( ), e );
 		}
@@ -387,10 +386,12 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 		WebSocketClient webSocketClient = sessions.get( session.getId( ) );
 		try {
 			removeClient( session );
-			webSocketClient.getWebSocketSession( ).close( status );
+			if ( webSocketClient != null )
+				webSocketClient.getWebSocketSession( ).close( status );
 		} catch ( IOException e ) {
 			logger.info( e.getMessage( ), e );
 		}
 		
 	}
+	
 }

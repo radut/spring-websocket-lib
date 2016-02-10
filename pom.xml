@@ -5,7 +5,7 @@
 	<artifactId>spring-websocket-omentrack</artifactId>
 	<version>1.2.4</version>
 
-	<name>Spring 4 WebSocket Implementation Addont - @WebSocketController</name>
+	<name>Spring 4 WebSocket Implementation with Annotation - @WebSocketController</name>
 
 	<distributionManagement>
 		<repository>

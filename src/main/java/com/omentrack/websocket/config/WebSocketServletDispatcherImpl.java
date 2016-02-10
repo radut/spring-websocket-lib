@@ -1,6 +1,5 @@
 package com.omentrack.websocket.config;
 
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -184,11 +183,11 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 				WebSocketMessage webSocketMessage = objectMapper.readValue( message.getPayload( ), WebSocketMessage.class );
 				response.setType( webSocketMessage.getType( ) );
 				response.setUrl( webSocketMessage.getUrl( ) );
-				synchronized ( session ) { // we must sync on session, because a thread could send a message to one of the user subscription, while this user sends, unsubscribe to alter that subscriptions list;
-					Object methodResultValue = handleWebSocketMessage( webSocketClient, objectMapper, webSocketMessage );
-					response.setResultOk( true );
-					response.setResult( methodResultValue );
-				}
+				// synchronized ( session ) { // we must sync on session, because a thread could send a message to one of the user subscription, while this user sends, unsubscribe to alter that subscriptions list;
+				Object methodResultValue = handleWebSocketMessage( webSocketClient, objectMapper, webSocketMessage );
+				response.setResultOk( true );
+				response.setResult( methodResultValue );
+				// }
 			} catch ( Exception e ) {
 				logger.warn( e.getMessage( ), e );
 				response.setErrorMessage( e.getMessage( ) );
@@ -294,24 +293,24 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 		
 		touchHttpSession( webSocketClient );
 		
-		synchronized ( webSocketClient.getWebSocketSession( ) ) {
-			WebSocketInvocableHandlerMethod wsihm = getWebSocketInvocableHandlerMethod( webSocketMessage );
-			Object returnValue = wsihm.invokeWithArguments( objectMapper, webSocketMessage.getData( ),//
-					new WebSocketSessionWrapper( webSocketClient.getWebSocketSession( ), this ), webSocketClient.getHttpSession( ) );
-					
-			switch ( webSocketMessage.getType( ) ) {
-				case SUBSCRIBE:
-					webSocketClient.getSubscriptions( ).add( webSocketMessage.getUrl( ) );
-					break;
-				case UNSUBSCRIBE:
-					webSocketClient.getSubscriptions( ).remove( webSocketMessage.getUrl( ) );
-					break;
-				case GET: // do nothing
-				default: // do nothing
-					break;
-			}
-			return returnValue;
+		// synchronized ( webSocketClient.getWebSocketSession( ) ) {
+		WebSocketInvocableHandlerMethod wsihm = getWebSocketInvocableHandlerMethod( webSocketMessage );
+		Object returnValue = wsihm.invokeWithArguments( objectMapper, webSocketMessage.getData( ),//
+				new WebSocketSessionWrapper( webSocketClient.getWebSocketSession( ), this ), webSocketClient.getHttpSession( ) );
+				
+		switch ( webSocketMessage.getType( ) ) {
+			case SUBSCRIBE:
+				webSocketClient.getSubscriptions( ).add( webSocketMessage.getUrl( ) );
+				break;
+			case UNSUBSCRIBE:
+				webSocketClient.getSubscriptions( ).remove( webSocketMessage.getUrl( ) );
+				break;
+			case GET: // do nothing
+			default: // do nothing
+				break;
 		}
+		return returnValue;
+		// }
 		
 	}
 	
@@ -332,11 +331,11 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 	}
 	
 	@Async
-	private Future<MessageStatus> sendMessageInternal( WebSocketClient client, WebSocketResponse message ) {
+	private Future<MessageStatus> sendMessageInternal( WebSocketClient webSocketClient, WebSocketResponse message ) {
 		
 		MessageStatus result = null;
-		WebSocketSession webSocketSession = client.getWebSocketSession( );
-		touchHttpSession( client );
+		WebSocketSession webSocketSession = webSocketClient.getWebSocketSession( );
+		touchHttpSession( webSocketClient );
 		String messageAsString;
 		try {
 			messageAsString = objectMapper.writeValueAsString( message );
@@ -345,12 +344,12 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 			boolean sent = false;
 			while ( retry-- > 0 ) {
 				try {
-					synchronized ( webSocketSession ) {
-						if ( webSocketSession.isOpen( ) ) {
-							webSocketSession.sendMessage( new TextMessage( messageAsString ) );
-							sent = true;
-						}
+					// synchronized ( webSocketSession ) {
+					if ( webSocketSession.isOpen( ) ) {
+						webSocketSession.sendMessage( new TextMessage( messageAsString ) );
+						sent = true;
 					}
+					// }
 				} catch ( Exception e ) {
 					exp = e;
 				}
@@ -362,44 +361,46 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 			}
 			if ( sent ) {
 				if ( logger.isDebugEnabled( ) )
-					logger.warn( "sent msg : " + webSocketSession.getId( )
-											 + " retriesLeft:"
-											 + retry
-											 + "  =  "
-											 + messageAsString );
+					logger.debug( "sent msg : " + webSocketSession.getId( )
+												+ " retriesLeft:"
+												+ retry
+												+ " msgLength = "
+												+ messageAsString.length( )
+												+ " =  "
+												+ messageAsString );
 				result = MessageStatus.buildOkResult( );
 			} else {
 				if ( retry > 0 ) {
-					logError( client, webSocketSession, exp );
+					logError( webSocketClient, webSocketSession, exp );
 					result = MessageStatus.buildErrorResult( exp );
 				} else {
 					result = MessageStatus.buildMaxRetryReached( );
 				}
 			}
 		} catch ( Exception e ) {
-			logError( client, webSocketSession, e );
+			logError( webSocketClient, webSocketSession, e );
 			result = MessageStatus.buildErrorResult( e );
 		}
 		return new AsyncResult<MessageStatus>( result );
 	}
 	
-	public void logError( WebSocketClient client, WebSocketSession webSocketSession, Exception exp ) {
+	public void logError( WebSocketClient webSocketClient, WebSocketSession webSocketSession, Exception exp ) {
 		
 		if ( logger.isDebugEnabled( ) )
-			logger.warn( "could not send message to client : jSessionId= " + client.getHttpSession( ).getId( )
+			logger.warn( "could not send message to client : jSessionId= " + webSocketClient.getHttpSession( ).getId( )
 									 + " webSocketSessionId="
 									 + webSocketSession.getId( ),
 					exp );
-		logger.warn( "could not send message to client : jSessionId= " + client.getHttpSession( ).getId( )
+		logger.warn( "could not send message to client : jSessionId= " + webSocketClient.getHttpSession( ).getId( )
 								 + " webSocketSessionId="
 								 + webSocketSession.getId( )
 								 + " : "
 								 + exp.getMessage( ) );
 	}
 	
-	public void touchHttpSession( WebSocketClient client ) {
+	public void touchHttpSession( WebSocketClient webSocketClient ) {
 		
-		StandardSession session = client.getRealSession( );
+		StandardSession session = webSocketClient.getRealSession( );
 		if ( session != null ) {
 			session.access( );
 			session.endAccess( );

@@ -1,6 +1,5 @@
 package com.omentrack.websocket.config.model;
 
-
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -9,12 +8,13 @@ import javax.servlet.http.HttpSession;
 import org.apache.catalina.session.StandardSession;
 import org.apache.catalina.session.StandardSessionFacade;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.web.socket.WebSocketSession;
 
 public class WebSocketClient {
 	
-	private static final Logger logger = Logger.getLogger( WebSocketClient.class );
+	private static final Logger logger = LogManager.getLogger( WebSocketClient.class );
 	
 	private HttpSession httpSession;
 	private Set<String> subscriptions = new ConcurrentSkipListSet<String>( );

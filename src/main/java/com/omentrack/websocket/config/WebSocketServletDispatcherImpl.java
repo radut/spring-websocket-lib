@@ -14,7 +14,8 @@ import java.util.concurrent.Future;
 import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.session.StandardSession;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -47,8 +48,8 @@ import com.omentrack.websocket.config.model.WebSocketSessionWrapper;
  */
 public class WebSocketServletDispatcherImpl extends TextWebSocketHandler implements WebSocketServletDispatcher {
 	
-	private static final Logger logger = Logger.getLogger( WebSocketServletDispatcherImpl.class );
-	
+
+private static final Logger logger = LogManager.getLogger( WebSocketServletDispatcherImpl.class );	
 	@Autowired
 	private ApplicationContext ctx;
 	

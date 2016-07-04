@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.radutoader.spring</groupId>
-	<artifactId>spring-websocket-radutoader</artifactId>
+	<artifactId>spring-websocket-lib</artifactId>
 	<version>1.2.5</version>
 
 	<name>Spring 4 WebSocket Implementation with Annotation - @WebSocketController</name>
@@ -10,12 +10,12 @@
 		<repository>
 			<id>radutoader</id>
 			<name>Internal Releases</name>
-			<url>http://nexus.radutoader.com/content/repositories/public/</url>
+			<url>https://nexus.radutoader.com/content/repositories/public/</url>
 		</repository>
 		<snapshotRepository>
 			<id>radutoader</id>
 			<name>Internal Releases</name>
-			<url>http://nexus.radutoader.com/content/repositories/snapshots/</url>
+			<url>https://nexus.radutoader.com/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 
@@ -124,35 +124,35 @@
 
 	<build>
 		<plugins>
-			<!-- <plugin> -->
-			<!-- <artifactId>maven-source-plugin</artifactId> -->
-			<!-- <version>2.3</version> -->
-			<!-- <executions> -->
-			<!-- <execution> -->
-			<!-- <id>attach-sources</id> -->
-			<!-- <goals> -->
-			<!-- <goal>jar</goal> -->
-			<!-- </goals> -->
-			<!-- </execution> -->
-			<!-- </executions> -->
-			<!-- </plugin> -->
-			<!-- <plugin> -->
-			<!-- <groupId>org.apache.maven.plugins</groupId> -->
-			<!-- <artifactId>maven-javadoc-plugin</artifactId> -->
-			<!-- <version>2.9</version> -->
-			<!-- <executions> -->
-			<!-- <execution> -->
-			<!-- <id>attach-javadocs</id> -->
-			<!-- <goals> -->
-			<!-- <goal>jar</goal> -->
-			<!-- </goals> -->
-			<!-- <configuration> -->
-			<!-- <failOnError>false</failOnError> -->
-			<!-- <additionalparam>-Xdoclint:none</additionalparam> -->
-			<!-- </configuration> -->
-			<!-- </execution> -->
-			<!-- </executions> -->
-			<!-- </plugin> -->
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<failOnError>false</failOnError>
+							<additionalparam>-Xdoclint:none</additionalparam>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

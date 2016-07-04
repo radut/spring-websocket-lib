@@ -1,4 +1,4 @@
-package com.omentrack.websocket.config;
+package com.radutoader.websocket.config;
 
 import java.util.List;
 import java.util.Map;
@@ -7,8 +7,8 @@ import java.util.concurrent.Future;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketSession;
 
-import com.omentrack.websocket.config.model.MessageStatus;
-import com.omentrack.websocket.config.model.WebSocketClient;
+import com.radutoader.websocket.config.model.MessageStatus;
+import com.radutoader.websocket.config.model.WebSocketClient;
 
 public interface WebSocketServletDispatcher {
 	

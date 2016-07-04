@@ -1,14 +1,16 @@
-package com.omentrack.websocket.config.annotation;
+package com.radutoader.websocket.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target( value = { ElementType.METHOD } )
+@Target( value = { ElementType.PARAMETER } )
 @Retention( RetentionPolicy.RUNTIME )
-public @interface WebSocketGet {
+public @interface WebSocketDataObject {
+
+	String value();
 	
-	String value() default "";
+	Class<?> transformTo();
 	
 }

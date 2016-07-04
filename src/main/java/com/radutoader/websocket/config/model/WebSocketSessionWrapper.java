@@ -1,4 +1,4 @@
-package com.omentrack.websocket.config.model;
+package com.radutoader.websocket.config.model;
 
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import org.springframework.web.socket.WebSocketExtension;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import com.omentrack.websocket.config.WebSocketServletDispatcher;
+import com.radutoader.websocket.config.WebSocketServletDispatcher;
 
 public class WebSocketSessionWrapper implements WebSocketSession {
 	

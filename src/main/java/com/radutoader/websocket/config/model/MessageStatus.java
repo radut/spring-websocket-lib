@@ -1,4 +1,4 @@
-package com.omentrack.websocket.config.model;
+package com.radutoader.websocket.config.model;
 
 public class MessageStatus {
 	private Exception exception;

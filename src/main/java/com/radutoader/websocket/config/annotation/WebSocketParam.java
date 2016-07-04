@@ -1,14 +1,15 @@
-package com.omentrack.websocket.config.annotation;
+package com.radutoader.websocket.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target( value = { ElementType.TYPE, ElementType.METHOD } )
+@Target( value = { ElementType.PARAMETER } )
 @Retention( RetentionPolicy.RUNTIME )
-public @interface WebSocketUnSubscribe {
+public @interface WebSocketParam {
 	
-	String value();
-
+	String value() default "";
+	
+	boolean required() default true;
 }

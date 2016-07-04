@@ -1,4 +1,4 @@
-package com.omentrack.websocket.config.model;
+package com.radutoader.websocket.config.model;
 
 import java.util.HashMap;
 import java.util.Map;

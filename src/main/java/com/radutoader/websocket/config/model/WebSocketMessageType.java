@@ -1,4 +1,4 @@
-package com.omentrack.websocket.config.model;
+package com.radutoader.websocket.config.model;
 
 public enum WebSocketMessageType {
 	GET, SUBSCRIBE, UNSUBSCRIBE, UPDATE;

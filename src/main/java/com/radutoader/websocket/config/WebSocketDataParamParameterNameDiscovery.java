@@ -1,4 +1,4 @@
-package com.omentrack.websocket.config;
+package com.radutoader.websocket.config;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -13,7 +13,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.util.StringUtils;
 
-import com.omentrack.websocket.config.annotation.WebSocketParam;
+import com.radutoader.websocket.config.annotation.WebSocketParam;
 
 public class WebSocketDataParamParameterNameDiscovery implements ParameterNameDiscoverer {
 	

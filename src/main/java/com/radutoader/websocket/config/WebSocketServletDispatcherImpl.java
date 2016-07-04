@@ -1,4 +1,4 @@
-package com.omentrack.websocket.config;
+package com.radutoader.websocket.config;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -31,16 +31,16 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.omentrack.websocket.config.annotation.WebSocketController;
-import com.omentrack.websocket.config.annotation.WebSocketGet;
-import com.omentrack.websocket.config.annotation.WebSocketSubscribe;
-import com.omentrack.websocket.config.annotation.WebSocketUnSubscribe;
-import com.omentrack.websocket.config.model.MessageStatus;
-import com.omentrack.websocket.config.model.WebSocketClient;
-import com.omentrack.websocket.config.model.WebSocketMessage;
-import com.omentrack.websocket.config.model.WebSocketMessageType;
-import com.omentrack.websocket.config.model.WebSocketResponse;
-import com.omentrack.websocket.config.model.WebSocketSessionWrapper;
+import com.radutoader.websocket.config.annotation.WebSocketController;
+import com.radutoader.websocket.config.annotation.WebSocketGet;
+import com.radutoader.websocket.config.annotation.WebSocketSubscribe;
+import com.radutoader.websocket.config.annotation.WebSocketUnSubscribe;
+import com.radutoader.websocket.config.model.MessageStatus;
+import com.radutoader.websocket.config.model.WebSocketClient;
+import com.radutoader.websocket.config.model.WebSocketMessage;
+import com.radutoader.websocket.config.model.WebSocketMessageType;
+import com.radutoader.websocket.config.model.WebSocketResponse;
+import com.radutoader.websocket.config.model.WebSocketSessionWrapper;
 
 /**
  *

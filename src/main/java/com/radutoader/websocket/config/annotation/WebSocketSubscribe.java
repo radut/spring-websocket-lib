@@ -1,4 +1,4 @@
-package com.omentrack.websocket.config.annotation;
+package com.radutoader.websocket.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

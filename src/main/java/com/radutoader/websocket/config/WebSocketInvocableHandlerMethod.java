@@ -1,4 +1,4 @@
-package com.omentrack.websocket.config;
+package com.radutoader.websocket.config;
 
 /*
  * Copyright 2002-2014 the original author or authors.
@@ -30,7 +30,7 @@ import org.springframework.util.ReflectionUtils;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.omentrack.websocket.config.annotation.WebSocketParam;
+import com.radutoader.websocket.config.annotation.WebSocketParam;
 
 /**
  * Invokes the handler method for a given message after resolving

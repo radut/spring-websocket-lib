@@ -10,12 +10,12 @@
 		<repository>
 			<id>radutoader</id>
 			<name>Internal Releases</name>
-			<url>https://nexus.radutoader.com/content/repositories/public/</url>
+			<url>https://nexus.radut.xyz/content/repositories/public/</url>
 		</repository>
 		<snapshotRepository>
 			<id>radutoader</id>
 			<name>Internal Releases</name>
-			<url>https://nexus.radutoader.com/content/repositories/snapshots/</url>
+			<url>https://nexus.radut.xyz/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 

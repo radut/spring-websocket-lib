@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.radutoader.spring</groupId>
 	<artifactId>spring-websocket-lib</artifactId>
-	<version>1.2.5</version>
+	<version>1.2.6</version>
 
 	<name>Spring 4 WebSocket Implementation with Annotation - @WebSocketController</name>
 
@@ -76,18 +76,18 @@
 			<version>1.2</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jdbc</artifactId>
-			<version>${org.apache.tomcat.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-el-api</artifactId>
-			<version>${org.apache.tomcat.version}</version>
-			<scope>provided</scope>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.apache.tomcat</groupId>-->
+			<!--<artifactId>tomcat-jdbc</artifactId>-->
+			<!--<version>${org.apache.tomcat.version}</version>-->
+			<!--<scope>provided</scope>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.tomcat</groupId>-->
+			<!--<artifactId>tomcat-el-api</artifactId>-->
+			<!--<version>${org.apache.tomcat.version}</version>-->
+			<!--<scope>provided</scope>-->
+		<!--</dependency>-->
 
 		<dependency>
 			<groupId>org.springframework</groupId>

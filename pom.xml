@@ -11,12 +11,12 @@
         <repository>
             <id>radutoader</id>
             <name>Internal Releases</name>
-            <url>https://nexus.radut.xyz/content/repositories/public/</url>
+            <url>https://nexus.radut.xyz/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>radutoader</id>
             <name>Internal Releases</name>
-            <url>https://nexus.radut.xyz/content/repositories/snapshots/</url>
+            <url>https://nexus.radut.xyz/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 

@@ -137,7 +137,6 @@
                         </goals>
                         <configuration>
                             <failOnError>false</failOnError>
-                            <additionalparam>-Xdoclint:none</additionalparam>
                         </configuration>
                     </execution>
                 </executions>
@@ -154,6 +153,7 @@
             </plugin>
         </plugins>
     </build>
+
     <profiles>
         <profile>
             <id>disable-java8-doclint</id>
@@ -165,4 +165,5 @@
             </properties>
         </profile>
     </profiles>
+    
 </project>

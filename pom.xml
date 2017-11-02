@@ -11,13 +11,8 @@
         <repository>
             <id>radutoader</id>
             <name>Internal Releases</name>
-            <url>https://nexus.radut.xyz/repository/maven-releases/</url>
+            <url>https://nexus.radut.xyz/repository/private-releases/</url>
         </repository>
-        <snapshotRepository>
-            <id>radutoader</id>
-            <name>Internal Releases</name>
-            <url>https://nexus.radut.xyz/repository/maven-snapshots/</url>
-        </snapshotRepository>
     </distributionManagement>
 
     <properties>

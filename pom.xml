@@ -9,10 +9,15 @@
 
     <distributionManagement>
         <repository>
-            <id>radutoader</id>
-            <name>Internal Releases</name>
-            <url>https://nexus.radut.xyz/repository/private-releases/</url>
+            <id>radut.xyz</id>
+            <name>Public Releases</name>
+            <url>https://nexus.radut.xyz/repository/public-releases/</url>
         </repository>
+        <snapshotRepository>
+            <id>radut.xyz</id>
+            <name>Public Releases</name>
+            <url>https://nexus.radut.xyz/repository/public-releases/</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <properties>

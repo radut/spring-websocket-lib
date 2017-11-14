@@ -1,0 +1,64 @@
+variables:
+# git ssl no verify - git clone works for https/ssl from letsencrypt
+  GIT_SSL_NO_VERIFY: "1"
+  #CI_DEBUG_TRACE: "true"
+#  DOCKER_DRIVER: overlay
+#  DOCKER_HOST: tcp://docker:2375
+  MAVEN_CLI_OPTS: "-s ${CI_PROJECT_DIR}/.m2/settings.xml --batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository"
+
+
+# gitlab_projectid-master
+# CI_PROJECT_NAME
+# $CI_PROJECT_ID-$CI_PROJECT_NAME-$CI_COMMIT_REF_NAME
+cache:
+  key: "$CI_PROJECT_ID-$CI_COMMIT_REF_NAME"
+#  untracked: true
+  paths:
+    - .m2/repository/
+
+stages:
+  - build
+  - deploy
+
+
+before_script:
+    - mkdir -p  ${CI_PROJECT_DIR}/.m2/repository || echo "folder already exists"
+    - echo '<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                                         https://maven.apache.org/xsd/settings-1.0.0.xsd">
+               <servers>
+                   <server>
+                       <id>radut.xyz</id>
+                       <username>${env.MVN_USER}</username>
+                       <password>${env.MVN_PASS}</password>
+                   </server>
+                   <server>
+                       <id>radut.xyz-private</id>
+                       <username>${env.MVN_USER}</username>
+                       <password>${env.MVN_PASS}</password>
+                   </server>
+               </servers>
+           </settings>' > ${CI_PROJECT_DIR}/.m2/settings.xml
+
+build:
+  image: radut/ubuntu-oracle-java8-letsencrypt_ca-maven
+  stage: build
+  retry: 2
+  allow_failure: false
+  tags:
+    - radut-docker-ci
+  script:
+    - mvn $MAVEN_CLI_OPTS clean package $MAVEN_OPTS
+
+
+deploy:
+  when: manual
+  image: radut/ubuntu-oracle-java8-letsencrypt_ca-maven 
+  allow_failure: false
+  stage: deploy
+  tags:
+    - radut-docker-ci
+  script:
+    - mvn $MAVEN_CLI_OPTS deploy -DskipTests $MAVEN_OPTS
+

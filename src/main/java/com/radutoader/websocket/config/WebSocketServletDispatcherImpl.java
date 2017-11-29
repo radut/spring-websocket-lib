@@ -18,8 +18,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
-import org.springframework.session.ExpiringSession;
-import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.PongMessage;
@@ -321,7 +319,7 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
     }
 
     @Async
-    private Future<MessageStatus> sendMessageInternal(WebSocketClient webSocketClient, WebSocketResponse message) {
+    public Future<MessageStatus> sendMessageInternal(WebSocketClient webSocketClient, WebSocketResponse message) {
 
         MessageStatus result = null;
         WebSocketSession webSocketSession = webSocketClient.getWebSocketSession();

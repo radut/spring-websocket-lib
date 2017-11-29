@@ -7,6 +7,8 @@ import com.radutoader.websocket.config.annotation.WebSocketSubscribe;
 import com.radutoader.websocket.config.annotation.WebSocketUnSubscribe;
 import com.radutoader.websocket.config.model.*;
 import org.apache.catalina.session.StandardSession;
+import org.apache.catalina.session.StandardSessionFacade;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.aop.support.AopUtils;
@@ -16,6 +18,8 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.session.ExpiringSession;
+import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.PongMessage;
@@ -371,10 +375,19 @@ public class WebSocketServletDispatcherImpl extends TextWebSocketHandler impleme
 
     public void touchHttpSession(WebSocketClient webSocketClient) {
 
-        StandardSession session = webSocketClient.getRealSession();
-        if (session != null) {
-            session.access();
-            session.endAccess();
+        HttpSession session = webSocketClient.getHttpSession();
+        if (session instanceof StandardSessionFacade) {
+            try {
+                StandardSession standardSession = (StandardSession) FieldUtils.readField(session, "session", true);
+                if (standardSession != null) {
+                    standardSession.access();
+                    standardSession.endAccess();
+                }
+            } catch (IllegalAccessException e) {
+                logger.warn(e.getMessage(), e);
+            }
+        } else {
+            logger.debug("Cannot touch httpSession, could expire if no other requests are made to server");
         }
 
     }

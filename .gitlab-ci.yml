@@ -46,8 +46,6 @@ build:
   stage: build
   retry: 2
   allow_failure: false
-  tags:
-    - radut-docker-ci
   script:
     - mvn $MAVEN_CLI_OPTS clean package $MAVEN_OPTS
 
@@ -57,8 +55,6 @@ deploy:
   image: radut/ubuntu-oracle-java8-letsencrypt_ca-maven 
   allow_failure: false
   stage: deploy
-  tags:
-    - radut-docker-ci
   script:
     - mvn $MAVEN_CLI_OPTS deploy -DskipTests $MAVEN_OPTS
 

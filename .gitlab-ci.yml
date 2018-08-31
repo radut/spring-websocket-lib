@@ -44,7 +44,6 @@ before_script:
 build:
   image: radut/ubuntu-oracle-java8-letsencrypt_ca-maven
   stage: build
-  retry: 2
   allow_failure: false
   script:
     - mvn $MAVEN_CLI_OPTS clean package $MAVEN_OPTS

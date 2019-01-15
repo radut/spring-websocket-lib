@@ -29,12 +29,12 @@ before_script:
                                          https://maven.apache.org/xsd/settings-1.0.0.xsd">
                <servers>
                    <server>
-                       <id>radut.info</id>
+                       <id>radut.xyz</id>
                        <username>${env.MVN_USER}</username>
                        <password>${env.MVN_PASS}</password>
                    </server>
                    <server>
-                       <id>radut.info-private</id>
+                       <id>radut.xyz-private</id>
                        <username>${env.MVN_USER}</username>
                        <password>${env.MVN_PASS}</password>
                    </server>

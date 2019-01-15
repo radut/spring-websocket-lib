@@ -9,14 +9,14 @@
 
     <distributionManagement>
         <repository>
-            <id>radut.info</id>
+            <id>radut.xyz</id>
             <name>Public Releases</name>
-            <url>https://nexus.radut.info/repository/public-releases/</url>
+            <url>https://nexus.radut.xyz/repository/public-releases/</url>
         </repository>
         <snapshotRepository>
-            <id>radut.info</id>
+            <id>radut.xyz</id>
             <name>Public Releases</name>
-            <url>https://nexus.radut.info/repository/public-releases/</url>
+            <url>https://nexus.radut.xyz/repository/public-releases/</url>
         </snapshotRepository>
     </distributionManagement>
 

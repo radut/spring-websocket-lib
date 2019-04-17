@@ -51,7 +51,7 @@ build:
 
 deploy:
   when: manual
-  image: radut/ubuntu-openjdk-java8-letsencrypt_ca-maven 
+  image: radut/openjdk-8-maven 
   allow_failure: false
   stage: deploy
   script:

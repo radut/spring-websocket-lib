@@ -42,7 +42,7 @@ before_script:
            </settings>' > ${CI_PROJECT_DIR}/.m2/settings.xml
 
 build:
-  image: radut/ubuntu-openjdk-java8-letsencrypt_ca-maven
+  image: radut/openjdk-8-maven
   stage: build
   allow_failure: false
   script:

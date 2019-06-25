@@ -4,7 +4,7 @@ variables:
   #CI_DEBUG_TRACE: "true"
 #  DOCKER_DRIVER: overlay
 #  DOCKER_HOST: tcp://docker:2375
-  MAVEN_CLI_OPTS: "-s ${CI_PROJECT_DIR}/.m2/settings.xml"
+  MAVEN_CLI_OPTS: "-s ${CI_PROJECT_DIR}/.m2/settings.xml --no-transfer-progress"
   MAVEN_OPTS: "-Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Djansi.passthrough=true"
 
 

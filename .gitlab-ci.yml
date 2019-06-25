@@ -12,8 +12,7 @@ variables:
 # CI_PROJECT_NAME
 # $CI_PROJECT_ID-$CI_PROJECT_NAME-$CI_COMMIT_REF_NAME
 cache:
-  key: "$CI_PROJECT_ID-$CI_COMMIT_REF_NAME"
-#  untracked: true
+  key: "$CI_PROJECT_NAME"
   paths:
     - .m2/repository/
 

@@ -18,7 +18,7 @@ cache:
 
 stages:
   - build
-  - deploy
+#  - deploy
 
 
 before_script:
@@ -45,14 +45,15 @@ build:
   stage: build
   allow_failure: false
   script:
-    - mvn $MAVEN_CLI_OPTS clean package $MAVEN_OPTS
+#    - mvn $MAVEN_CLI_OPTS clean package $MAVEN_OPTS
+    - mvn $MAVEN_CLI_OPTS clean deploy $MAVEN_OPTS
 
 
-deploy:
-#  when: manual
-  image: radut/openjdk-8-maven 
-  allow_failure: false
-  stage: deploy
-  script:
-    - mvn $MAVEN_CLI_OPTS deploy -DskipTests $MAVEN_OPTS
+#deploy:
+##  when: manual
+#  image: radut/openjdk-8-maven 
+#  allow_failure: false
+#  stage: deploy
+#  script:
+#    - mvn $MAVEN_CLI_OPTS deploy -DskipTests $MAVEN_OPTS
 

@@ -49,7 +49,7 @@ build:
 
 
 deploy:
-  when: manual
+#  when: manual
   image: radut/openjdk-8-maven 
   allow_failure: false
   stage: deploy

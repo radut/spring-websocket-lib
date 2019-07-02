@@ -1,4 +1,5 @@
 variables:
+  GIT_DEPTH: 1
 # git ssl no verify - git clone works for https/ssl from letsencrypt
   GIT_SSL_NO_VERIFY: "1"
   #CI_DEBUG_TRACE: "true"

@@ -43,6 +43,7 @@ before_script:
 build:
   image: radut/openjdk-8-maven
   stage: build
+  artifacts: {}
   allow_failure: false
   script:
 #    - mvn $MAVEN_CLI_OPTS clean package $MAVEN_OPTS

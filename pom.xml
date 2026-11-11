@@ -7,16 +7,24 @@
 
     <name>Spring 4 WebSocket Implementation with Annotation - @WebSocketController</name>
 
+    <!-- Published to THIS project's GitLab Maven package registry (radutoader/projects/java/
+         spring-websocket-lib, project 70576581). It used to be the decommissioned private Nexus, which is
+         why spring-mvc-archetype could no longer resolve com.radutoader.spring:spring-websocket-lib and its
+         image build failed with "Could not resolve dependencies".
+         The numeric project id is written out rather than ${env.CI_PROJECT_ID} so `mvn deploy` works from a
+         workstation too, and so the URL can be read on its own.
+         No credential lives in this file: CI's settings.xml sends the pipeline's own CI_JOB_TOKEN as a
+         Job-Token header for server id `gitlab-maven` (see .gitlab-ci.yml). -->
     <distributionManagement>
         <repository>
-            <id>radut.info</id>
-            <name>Public Releases</name>
-            <url>https://nexus.radut.info/repository/public-releases/</url>
+            <id>gitlab-maven</id>
+            <name>GitLab Packages</name>
+            <url>https://gitlab.com/api/v4/projects/70576581/packages/maven</url>
         </repository>
         <snapshotRepository>
-            <id>radut.info</id>
-            <name>Public Releases</name>
-            <url>https://nexus.radut.info/repository/public-releases/</url>
+            <id>gitlab-maven</id>
+            <name>GitLab Packages</name>
+            <url>https://gitlab.com/api/v4/projects/70576581/packages/maven</url>
         </snapshotRepository>
     </distributionManagement>
 

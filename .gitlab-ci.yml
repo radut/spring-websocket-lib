@@ -1,6 +1,4 @@
 variables:
-# git ssl no verify - git clone works for https/ssl from letsencrypt
-  GIT_SSL_NO_VERIFY: "1"
   #CI_DEBUG_TRACE: "true"
 #  DOCKER_DRIVER: overlay
 #  DOCKER_HOST: tcp://docker:2375
@@ -22,24 +20,36 @@ stages:
 
 
 before_script:
-    - mkdir -p  ${CI_PROJECT_DIR}/.m2/repository || echo "folder already exists"
-    - echo '<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
-                                         https://maven.apache.org/xsd/settings-1.0.0.xsd">
-               <servers>
-                   <server>
-                       <id>radut.info</id>
-                       <username>${env.MVN_USER}</username>
-                       <password>${env.MVN_PASS}</password>
-                   </server>
-                   <server>
-                       <id>radut.info-private</id>
-                       <username>${env.MVN_USER}</username>
-                       <password>${env.MVN_PASS}</password>
-                   </server>
-               </servers>
-           </settings>' > ${CI_PROJECT_DIR}/.m2/settings.xml
-
+  # settings.xml for the GitLab Maven package registry this project publishes to (pom.xml
+  # distributionManagement, server id `gitlab-maven`). The old file held MVN_USER/MVN_PASS for the
+  # decommissioned private Nexus; those CI variables are no longer needed by this project.
+  #
+  # The heredoc is QUOTED ('XML') on purpose: ${env.CI_JOB_TOKEN} is Maven's own syntax, not the shell's, and
+  # an unquoted heredoc would make bash fail on it with "bad substitution". Maven reads the variable itself,
+  # so the token is never echoed into the job log and nothing has to be stored anywhere - the pipeline's own
+  # job token is the credential, and it dies with the job.
+  - mkdir -p "${CI_PROJECT_DIR}/.m2/repository"
+  - |
+    cat > "${CI_PROJECT_DIR}/.m2/settings.xml" <<'XML'
+    <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                                  https://maven.apache.org/xsd/settings-1.0.0.xsd">
+      <servers>
+        <server>
+          <id>gitlab-maven</id>
+          <configuration>
+            <httpHeaders>
+              <property>
+                <name>Job-Token</name>
+                <value>${env.CI_JOB_TOKEN}</value>
+              </property>
+            </httpHeaders>
+          </configuration>
+        </server>
+      </servers>
+    </settings>
+    XML
 build:
   image: radut/openjdk-8-maven
   stage: build

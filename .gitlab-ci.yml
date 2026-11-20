@@ -14,6 +14,18 @@ cache:
   paths:
     - .m2/repository/
 
+# Which pipelines exist (the same block in every repo): a merge request gets a merge-request pipeline; a
+# branch with an open MR gets no branch pipeline for the same commit (no duplicates); any other branch, the
+# default branch and tags get a branch/tag pipeline. Every job carries `rules:`, because a job without
+# them is left out of merge-request pipelines.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+    - if: $CI_COMMIT_TAG
+
 stages:
   - build
 #  - deploy
@@ -55,9 +67,18 @@ build:
   stage: build
   artifacts: {}
   allow_failure: false
+  # `deploy` publishes to the Maven package registry, so only the default branch and release tags do it;
+  # merge requests and other branches run `verify` (compile, tests, package) and publish nothing.
+  variables:
+    MAVEN_GOAL: verify
   script:
 #    - mvn $MAVEN_CLI_OPTS clean package $MAVEN_OPTS
-    - mvn $MAVEN_CLI_OPTS clean deploy $MAVEN_OPTS
+    - mvn $MAVEN_CLI_OPTS clean $MAVEN_GOAL $MAVEN_OPTS
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG
+      variables:
+        MAVEN_GOAL: deploy
+    - when: on_success
 
 
 #deploy:
